@@ -107,7 +107,7 @@ int i = 10;                     //10
 String str = String.valueOf(i); //"10"
 ```
 
-# 8 StringTokenizer 클래스
+# 8. StringTokenizer 클래스
 - 문자열이 **특정 구분자(delimiter)로 연결**되어 있을 경우, 
   **구분자를 기준으로 부분 문자열을 분리**하기 위해서는 String의 split() 메소드를 이용하거나, 
   java.util 패키지의 StringTokenizer 클래스를 이용할 수 있습니다.  
@@ -147,4 +147,40 @@ StringTokenizer st = new StringTokenizer(text, "/");
 while (st.hasMoreTokens()) {
     System.out.println(st.nextToken());
 }
+```
+
+# 9. StringBuffer, StringBuilder 클래스
+- 문자열을 저장하는 String은 내부의 **문자열을 수정할 수 없습니다.**
+- String의 replace() 메소드는 내부의 문자를 대치하는 것이 아니라, 대치된 **새로운 문자열을 리턴**합니다.
+- 문자열을 결합하는 + 연산자를 많이 사용하면 할수록 그만큼 String **객체의 수**가 늘어나기 때문에,
+  **프로그램 성능을 느리게 하는 요인**이 됩니다.
+- **문자열을 변경**하는 작업이 많을 경우에는 java.util 패키지의 StringBuffer 또는 StringBuilder 클래스를 사용하는 것이 좋습니다.
+
+## StringBuffer와 StringBuilder의 차이점
+- 사용 방법은 동일하지만, StringBuffer는 **멀티 스레드 환경**에서 사용할 수 있도록 **동기화가 적용**되어 있어 **스레드에 안전**합니다.
+- 반면, StringBuilder는 **단일 스레트 환경**에서만 사용하도록 설계되어 있습니다.
+```java
+StringBuilder sb = new StringBuilder();
+StringBuffer sb = new StringBuffer();
+```
+
+## StringBuilder 메소드
+메소드|설명
+:---|:---
+append(매개값)|문자열 끝에 주어진 매개값을 추가
+insert(int offset, 매개값)|문자열 중간에 주어진 매개값을 추가
+delete(int start, int end)|문자열의 일부분을 삭제
+deleteCharAt(int index)|문자열에서 주어진 index의 문자를 삭제
+replace(int start, int end, String str)|문자열의 일부분을 다른 문자열로 대치
+StringBuilder reverse()|문자열의 순서를 뒤바꿈
+setCharAt(int index, char ch)|문자열에서 주어진 index의 문자를 다른 문자로 대치
+```java
+StringBuilder sb = new StringBuilder();
+
+sb.append("Java ").append("Program Study");  //"Java Program Study"
+
+sb.insert(4, '2');          //Java2 Program Study (4번째 문자 뒤에 2를 삽입)
+sb.setCharAt(4, '6');       //Java6 Program Study (4번쨰 문자 뒤의 문자를 6으로 변경)
+sb.replace(6, 13, "Book");  //Java6 Book Study (6번째 문자 뒤부터 13번째 문자까지를 "Book" 문자열로 대치
+sb.delete(4, 5);            //Java Book Study (5번째 문자를 삭제)
 ```
