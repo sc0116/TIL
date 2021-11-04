@@ -106,3 +106,45 @@ String newStr = oldStr.trim();  //"자바 프로그래밍"
 int i = 10;                     //10
 String str = String.valueOf(i); //"10"
 ```
+
+# 8 StringTokenizer 클래스
+- 문자열이 **특정 구분자(delimiter)로 연결**되어 있을 경우, 
+  **구분자를 기준으로 부분 문자열을 분리**하기 위해서는 String의 split() 메소드를 이용하거나, 
+  java.util 패키지의 StringTokenizer 클래스를 이용할 수 있습니다.  
+- split()은 **정규 표현식**으로 구분하고, StringTokenizer는 **문자**로 구분한다는 차이점이 있습니다.
+
+## split() 메소드
+- **정규 표현식**을 구분자로 해서 문자열을 분리한 후, 배열에 저장하고 리턴합니다.
+```java
+String[] result = "문자열".split("정규표현식");
+
+//예시
+String text = "홍길동&이수홍,박연수,김자바-최명호";
+String[] names = text.split("& | , | -");   //["홍길동", "이수홍", "박연수", "김자바", "최명호"]
+```
+
+## Stringtokenizer 클래스
+- 문자열이 **한 종류의 구분자**로 연결되어 있을 경우, StringTokenizer 클래스를 사용하면 쉽게 문자열을 분리해 낼 수 있습니다.
+- StringTokenizer 객체를 생성할 때 첫 번재 매개값으로 전체 문자열을 주고 두 번째 매개값으로 구분자를 주면 됩니다.
+```java
+StringTokenizer st = new StringTokenizer("문자열", "구분자");
+
+//예시
+String text = "홍길동/이수홍/박연수/김자바";
+StringTokenizer st = new StringTokenizer(text, "/");    ["홍길동", "이수홍", "박연수", "김자바"]
+```
+- 객체가 생성되면 다음 메소드들을 이용해서 부분 문자열을 분리해 낼 수 있습니다.  
+
+|리턴 타입|메소드명|설명|
+|:---|:---|:---| 
+|int|countTokens()|꺼내지 않고 남아 있는 토큰의 수|
+|boolean|hasMoreTokens()|남아 있는 토큰이 있는지 여부|
+String|nextToken()|토큰을 하나씩 꺼내옴|
+```java
+String text = "신/승/철";
+
+StringTokenizer st = new StringTokenizer(text, "/");
+while (st.hasMoreTokens()) {
+    System.out.println(st.nextToken());
+}
+```
