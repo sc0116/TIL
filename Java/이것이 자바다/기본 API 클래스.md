@@ -217,3 +217,87 @@ sb.setCharAt(4, '6');       //Java6 Program Study (4번쨰 문자 뒤의 문자�
 sb.replace(6, 13, "Book");  //Java6 Book Study (6번째 문자 뒤부터 13번째 문자까지를 "Book" 문자열로 대치
 sb.delete(4, 5);            //Java Book Study (5번째 문자를 삭제)
 ```
+
+# 10. 정규 표현식과 Pattern 클래스
+- 문자열이 정해져 있는 형식으로 구성되어 있는지 검증해야 하는 경우가 있습니다.
+- 예를 들어, 이메일, 전화번호를 사용자가 제대로 입력했는지 검증해야 할 때 정규 표현식과 비교합니다.
+
+## 정규 표현식 작성 방법
+- 정규 표현식은 문자 또는 숫자 기호와 반복 기호가 결합된 문자열입니다.
+<table>
+<tr><th>기호</th><th colspan="3">설명</th></tr>
+<tr><td rowspan="3">[]</td><td rowspan="3">한 개의 문자</td><td>[abc]</td><td>a, b, c 중 하나의 문자</td></tr>
+<tr><td>[^abc]</td><td>a, b, c 이외의 하나의 문자</td></tr>
+<tr><td>[a-zA-Z]</td><td>a~z, A~Z 중 하나의 문자</td></tr>
+<tr><td>\d</td><td colspan="3">한 개의 숫자, [0-9]와 동일</td></tr>
+<tr><td>\s</td><td colspan="3">공백</td></tr>
+<tr><td>\w</td><td colspan="3">한 개의 알파벳 또는 한 개의 숫자, [a-zA-Z_0-9]와 동일</td></tr>
+<tr><td>?</td><td colspan="3">없음 또는 한 개</td></tr>
+<tr><td>*</td><td colspan="3">없음 또는 한 개 이상</td></tr>
+<tr><td>+</td><td colspan="3">한 개 이상</td></tr>
+<tr><td>{n}</td><td colspan="3">정확히 n개</td></tr>
+<tr><td>{n,}</td><td colspan="3">최소한 n개</td></tr>
+<tr><td>{n, m}</td><td colspan="3">n개에서부터 m개까지</td></tr>
+<tr><td>()</td><td colspan="3">그룹핑</td></tr>
+</table>
+
+### 전화번호 정규 표현식
+- 02-123-1234 또는 010-1234-5678과 같은 전화번호를 위한 정규 표현식입니다.
+```java
+(02|010)-\d{3, 4}-\d{4}
+```
+<table>
+<tr><th>기호</th><th>설명</th></tr>
+<tr><td>(02|010)</td><td>02 또는 010</td></tr>
+<tr><td>-</td><td>- 포함</td></tr>
+<tr><td>\d{3, 4}</td><td>3자리 또는 4자리 숫자</td></tr>
+<tr><td>-</td><td>- 포함</td></tr>
+<tr><td>\d{4}</td><td>4자리 숫자</td></tr>
+</table>
+
+### 이메일 정규 표현식
+- test@naver.com과 같은 이메일을 위한 정규 표현식입니다.
+```java
+\w+@\w+\.\w+(\.\w+)?
+```
+<table>
+<tr><th>기호</th><th>설명</th></tr>
+<tr><td>\w+</td><td>한 개 이상의 알파벳 또는 숫자</td></tr>
+<tr><td>@</td><td>@</td></tr>
+<tr><td>\w+</td><td>한 개 이상의 알파벳 또는 숫자</td></tr>
+<tr><td>\.</td><td>.</td></tr>
+<tr><td>\w+</td><td>한 개 이상의 알파벳 또는 숫자</td></tr>
+<tr><td>(\.\w+)?</td><td>\.\w+이 없거나 한 번 더 올 수 있음</td></tr>
+</table>
+
+- 주의할 점은 \.과 .은 다른데, \.은 문자로서의 점(.)을 말하지만 .은 모든 문자 중에서 한 개의 문자를 뜻합니다.
+
+## Pattern 클래스
+- 문자열을 정규 표현식으로 검증하는 기능은 java.util.regex.Pattern 클래스의 정적 메소드인 matches() 메소드가 제공합니다.
+- 첫 번째 매개값은 정규 표현식이고, 두 번째 매개값은 검증할 문자열입니다.
+- 검증 후 결과가 boolean 타입으로 리턴됩니다.
+```java
+public class PatternExample {
+  public static void main(String[] args) {
+    String regExp = "(02|010)-\\d{3, 4}-\\d{4}";
+    String data = "010-123-4567";
+    boolean result = Pattern.matches(regExp, data);
+    
+    if (result) {
+      System.out.println("정규식과 일치합니다.");
+    } else {
+      System.out.println("정규식과 일치하지 않습니다.");
+    }
+    
+    regExp = "\\w+@\\w+\\.\\w+(\\.\\w+)?";
+    data = "angel@navercom")    //naver와 com 사이에 .이 없음
+    result = Pattern.matches(regExp, data);
+    
+    if (result) {
+      System.out.println("정규식과 일치합니다.");
+    } else {
+      System.out.println("정규식과 일치하지 않습니다.");
+    }
+  }
+}
+```
