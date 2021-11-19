@@ -316,6 +316,212 @@ public class FinalizeExample {
 - 그리고 전부 소멸시키는 것이 아니라 메모리의 상태를 보고 일부만 소멸시킵니다.
 - 예제에서는 System.gc()로 쓰레기 수집기를 실행 요청하였으나, 쓰레기 수집기는 메모리가 부족할 때 그리고 CPU가 한가할 때에 JVM에 의해서 자동 실행됩니다.
 
+# 4. Objects 클래스
+- java.util.Objects 클래스는 객체 비교, 해시코드 생성, null 여부, 객체 문자열 리턴 등의 연산을 수행하는 정적 메소드들로 구성된 Object의 유틸리티 클래스입니다.
+
+리턴 타입|메소드(매개 변수)|설명
+:---|:---|:---
+int|compare(T a, T b, Comparator<T> c)|두 객체 a와 b를 Comparator를 사용해서 비교
+boolean|deepEquals(Object a, Object b)|두 객체의 깊은 비교(배열의 항목까지 비교)
+boolean|equals(Object a, Object b)|두 객체의 얕은 비교(번지만 비교)
+int|hash(Object... values)|매개값이 저장된 배열의 해시코드 생성
+int|hashCode(Object o)|객체의 해시코드 생성
+boolean|isNull(Object obj)|객체가 null인지 조사
+boolean|nonNull(Object obj)|객체가 null이 아닌지 조사
+T|requireNonNull(T obj)|객체가 null인 경우 예외 발생
+T|requireNonNull(T obj, String message)|객체가 null인 경우 예외 발생(주어진 예외 메시지 포함)
+T|requireNonNUll(T obj, Supplier<String> messageSupplier)|객체가 null인 경우 예외 발생(람다식이 만든 예외 메시지 포함)
+String|toString(Object o)|객체의 toString() 리턴값 리턴
+String|toString(Object o, String nullDefault)|객체의 toString() 리턴값 리턴, 첫 번째 매개값이 null일 경우 두 번째 매개값 리턴
+
+## 객체 비교(compare(T a, T b, Comparator<T> c))
+- 두 객체를 비교자(Comparator)로 비교해서 int 값을 리턴합니다.
+- a가 b보다 작으면 음수, 같으면 0, 크면 양수를 리턴하도록 구현 클래스를 만들어야 합니다.
+```java
+public class CompareExample { 
+    public static void main(String[] args) {
+        Student s1 = new Student(1);
+        Student s2 = new Student(1);
+        Student s3 = new Student(2);
+        
+        int result = Objects.compare(s1, s2, new StudentComparator());
+        System.out.println(result);
+        result = Objects.compare(s1, s3, new StudentComparator());
+        System.out.println(result);
+    }
+
+    static class Student {
+        itn sno;
+        Student(int sno) {
+            this.sno = sno;
+        }
+    }
+    
+    static class StudentComparator implements Comparator<Student> {
+        @Override
+        public int compare(Student o1, Student o2) {
+            /*
+            if (o1.sno < o2.sno) return -1;
+            else if (o1.sno == o2.sno) return 0;
+            else return 1;
+            */
+            return Integer.compare(o1.sno, o2.sno);
+        }
+    }
+}
+```
+
+## 동등 비교(equals()와 deepEquals())
+
+### equals()
+- Objects.equals(Object a, Object b)는 두 객체의 동등을 비교하는데 다음과 같은 결과를 리턴합니다.
+- 특이한 점은 a와 b가 모두 null일 경우 true를 리턴한다는 점입니다.
+
+a|b|Objects.equals(a, b)
+:---|:---|:---
+not null|not null|a.equals(b)의 리턴값
+null|not null|false
+not null|null|false
+null|null|true
+
+### deepEquals()
+- Objects.deepEquals(Object a, Object b) 역시 두 객체의 동등을 비교하는데, a와 b가 서로 다른 배열일 경우, 항목 값이 모두 같다면 true를 리턴합니다.
+- 이것은 Arrays.deepEquals(Object[] a, Object[] b)와 동일합니다.
+
+a|b|Objects.deepEquals(a, b)
+:---|:---|:---
+not null (not array)|not null (not array)|a.equals(b)의 리턴값
+not null (array)|not null (array)|Arrays.deepEquals(a, b)의 리턴값
+not null|null|false
+null|not null|false
+null|null|true
+```java
+public class EqualsAndDeepExample {
+  public static void main(String[] args) {
+    Integer o1 = 1000;
+    Integer o2 = 1000;
+    System.out.println(Objcets.equals(o1, o2));             //true
+    System.out.println(Objcets.equals(o1, null));           //false
+    System.out.println(Objcets.equals(null, o2));           //false
+    System.out.println(Objcets.equals(null, null));         //true
+    System.out.println(Objcets.deepEquals(o1, o2) + "\n");  //true
+    
+    Integer[] arr1 = { 1, 2 };
+    Integer[] arr2 = { 1, 2 };
+    System.out.println(Objects.equals(arr1, arr2));         //false
+    System.out.println(Objects.deepEquals(arr1, arr2));     //true
+    System.out.println(Arrays.deepEquals(arr1, arr2));      //true
+    System.out.println(Objects.deepEquals(null, arr2));     //false
+    System.out.println(Objects.deepEquals(arr1, null));     //false
+    System.out.println(Objects.deepEquals(null, null));     //true
+  }
+}
+```
+
+## 해시코드 생성(hash(), hashCode())
+
+### hash()
+- Objects.hash(Object... values) 메소드는 매개값으로 주어진 값들을 이용해서 해시 코드를 생성하는 역할을 하는데, 주어진 매개값들로 배열을 생성하고 Arrays.hashCode(Object[])를 호출해서 해시코드를 얻고 이 값을 리턴합니다.
+- 이 메소드는 클래스가 hashCode()를 재정의할 때 리턴값을 생성하기 위해 사용하면 좋습니다.
+- 클래스가 여러 가지 필드를 가지고 있을 때 이 필드들로부터 해시코드를 생성하게 되면 동일한 필드값을 가지는 객체는 동일한 해시코드를 가질 수 있습니다.
+```java
+@Override
+public int hashCode() {
+    return Objects.hash(field1, field2, field3);
+}
+```
+
+### hashCode()
+- Objects.hashCode(Object o)는 매개값으로 주어진 객체의 해시코드를 리턴하기 때문에 o.hashCode()의 리턴값과 동일합니다.
+- 차이점은 매개값이 null이면 0을 리턴합니다.
+```java
+public class HashCodeExample {
+  public static void main(String[] args) {
+    Student s1 = new Student(1, "홍길동");
+    Student s2 = new Student(1, "홍길동");
+    System.out.println(s1.hashCode());
+    System.out.println(Objects.hashcode(s2));
+  }
+  
+  static class Student {
+      int sno;
+      String name;
+      
+      Student(int sno, String name) {
+          this.sno = sno;
+          this.name = name;
+      }
+      
+      @Override
+        public int hashCode() {
+          return Objects.hash(sno, name);
+      }
+  }
+}
+```
+
+## 널 여부 조사(isNull(), nonNull(), requireNonNull())
+- Objects.isNull(Object obj)는 매개값이 null일 경우 true를 리턴합니다.
+- 반대로 nonNull(Object obj)는 매개값이 not null일 경우 true를 리턴합니다.
+- requireNonNull()는 다음 세 가지로 오버로딩 되어 있습니다.
+
+리턴 타입|메소드(매개 변수)|설명
+:---|:---|:---
+T|requireNonNull(T obj)|not null -> obj<br>null -> NullPointerException
+T|requireNonNull(T obj, String message)|not null -> obj<br>null -> NullPointerException(message)
+T|requireNonNull(T obj, Supplier<String> msgSupplier)|not null -> obj<br>null -> NullPointerException(msgSupplier.get())
+- 첫 번째 매개값이 not null이면 첫 번째 매개값을 리턴하고, null이면 모두 NullPointerException을 발생시킵니다.
+- 두 번째 매개값은 NullPointerException의 예외 메시지를 제공합니다.
+```java
+public class NullExample {
+  public static void main(String[] args) {
+    String str1 = "홍길동";
+    String str2 = null;
+
+    System.out.println(Objects.requireNonNull(str1));
+    
+    try {
+        String name = Objects.requireNonNull(str2);
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+    
+    try {
+        String name = Objects.requireNonNull(str2, "이름이 없습니다.");
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+    
+    try {
+        String name = Objects.requireNonNull(str2, () -> "이름이 없다니깐요")
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
+}
+```
+
+## 객체 문자 정보(toString())
+- Objects.toString()은 객체의 문자 정보를 리턴하는데, 다음 두 가지로 오버로딩되어 있습니다.
+
+리턴 타입|메소드(매개 변수)|설명
+:---|:---|:---
+String|toString(Object o)|not null -> o.toString()<br>null -> "null"
+String|toString(Object o, String nullDefault)|not null -> o.toString()<br>null -> nullDefault
+- 첫 번째 매개값이 not null이면 toString()으로 얻은 값을 리턴하고, null이면 "null" 또는 두 번째 매개값인 nullDefault를 리턴합니다.
+```java
+public class ToStringExample {
+  public static void main(String[] args) {
+    String str1 = "홍길동";
+    String str2 = null;
+
+    System.out.println(Objects.toString(str1));
+    System.out.println(Objects.toString(str2));
+    System.out.println(Objects.toString(str2, "이름이 없습니다."));
+  }
+}
+```
+
 # 7. String 클래스
 - 자바의 문자열은 java.lang 패키지의 String 클래스의 인스턴스로 관리됩니다.
 
