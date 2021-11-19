@@ -522,6 +522,109 @@ public class ToStringExample {
 }
 ```
 
+# 5. System 클래스
+- 자바 프로그램은 운영체제상에서 바로 실행되는 것이 아니라 JVM 위에서 실행되기 때문에 운영체제의 모든 기능을 자바 코드로 직접 접근하기란 어렵습니다.
+- 하지만 java.lang 패키지에 속하는 System 클래스를 이용하면 운영체제의 일부 기능을 이용할 수 있습니다. (프로그램 종료, 키보드 입력, 모니터 출력, 메모리 정리, 현재 시간 읽기, 시스템 프로퍼티 읽기, 환경 변수 읽기 등)
+- System 클래스의 모든 필드와 메소드는 정적 필드와 정적 메소드로 구성되어 있습니다.
+
+## 프로그램 종료(exit())
+- exit() 메소드는 현재 실행하고 있는 프로세스를 **강제 종료**시키는 역할을 합니다.
+- exit() 메소드는 int 매개값을 지정하도록 되어 있는데, 이 값을 종료 상태값이라고 합니다.
+- 일반적으로 정상 종료일 경우 0으로 지정하고 비정상 종료일 경우 0 이외의 다른 값을 줍니다.
+```java
+System.exit(0);
+```
+- 만약 특정 값이 입력되었을 경우에만 종료하고 싶다면 자바의 보안 관리자를 직접 설정해서 종료 상태값을 확인하면 됩니다.
+- System.exit()가 실행되면 보안 관리자의 checkExit() 메소드가 자동 호출되는데, 이 메소드에서 종료 상태값을 조사해서 특정 값이 입력되지 않으면 SecurityException을 발생시켜 System.exit()를 호출한 곳에서 예외 처리를 할 수  있도록 해줍니다.
+```java
+public class ExitExample {
+  public static void main(String[] args) {
+    //보안 관리자 설정
+    System.setSecurityManaager(new SecurityManager() {
+      @Override
+      public void checkExit(int status) {
+        if (status != 5) {
+          throw new SecurityException();
+        }
+      }
+    });
+    
+    for (int i = 0; i < 10; i++) {
+      System.out.println(i);
+      try {
+          System.exit(i);
+      } catch (SecurityException e) { }
+    }
+  }
+}
+```
+
+## 쓰레기 수집기 실행(gc())
+- 자바는 개발자가 메모리를 직접 코드로 관리하지 않고 JVM이 알아서 자동으로 관리합니다.
+- JVM은 메모리가 부족할 때와 CPU가 한가할 때에 쓰레기 수집기(Garbage Collector)를 실행시켜 사용하지 않는 객체를 자동 제거합니다.
+- 쓰레기 수집기는 개발자가 직접 코드로 실행시킬 수 없고, JVM에게 **가능한한 빨리 실행해 달라고 요청**할 수는 있습니다.
+- System.gc() 메소드가 호출되면 쓰레기 수집기가 바로 실행되는 것은 아니고, JVM은 빠른 시간 내에 실행시키기 위해 노력합니다.
+```java
+System.gc();
+```
+
+## 현재 시각 읽기(currentTimeMillis(), nanoTime())
+- currentTimeMillis() 메소드와 nanoTime() 메소드는 컴퓨터의 시계로부터 현재 시간을 읽어서 밀리세컨드(1/1000초) 단위와 나노세컨드(1/10^9초) 단위의 long 값을 리턴합니다.
+```java
+long time = System.currentTimeMillis();
+long time = System.nanoTime();
+```
+- 리턴값은 주로 프로그램의 실행 소요 시간 측정에 사용됩니다.
+```java
+public class SystemTimeExample {
+  public static void main(String[] args) {
+    long time1 = System.nanoTime();
+    
+    int sum = 0;
+    for (int i = 1; i <= 1000000; i++) {
+        sum += i;
+    }
+    
+    long time2 = System.nanoTime();
+
+    System.out.println("1 ~ 1000000까지의 합: " + sum);
+    System.out.println("계산에 " + (time2 - time1) + " 나노초가 소요되었습니다.");
+  }
+}
+```
+
+## 시스템 프로퍼티 읽기(getProperty())
+- 시스템 프로퍼티는 JVM이 시작할 때 자동 설정되는 시스템의 속성값을 말하며, 키와 값으로 구성되어 있습니다.
+
+키(key)|설명|값(value)
+:---|:---|:---
+java.version|자바의 버전|1.8.0_20
+java.home|사용하는 JRE의 파일 경로|<jdk 설치경로>\jre
+os.name|Operating System name|Windows 10
+file.separator|File separator ("/" on UNIX)|\
+user.name|사용자의 이름|사용자계정
+user.home|사용자의 홈 디렉토리|C:\Users\사용자계정
+user.dir|사용자가 현재 작업 중인 디렉토리 경로|다양
+- 시스템 프로퍼티를 읽어오기 위해서는 System.getProperty() 메소드를 이용하면 됩니다.
+- 이 메소드는 시스템 프로퍼티의 키 이름을 매개값으로 받고, 해당 키에 대한 값을 문자열로 리턴합니다.
+```java
+String value = System.getProperty(String key);
+```
+
+## 환경 변수 읽기(getenv())
+- 대부분의 운영체제는 실행되는 프로그램들에게 유용한 정보를 제공할 목적으로 환경 변수를 제공합니다.
+- 환경 변수는 프로그램상의 변수가 아니라 운영체제에서 이름과 값으로 관리되는 문자열 정보입니다.
+- 자바 프로그램에서는 환경 변수의 값이 필요할 경우 System.getenv() 메소드를 사용합니다.
+- 매개값으로 환경 변수 이름을 주면 값을 리턴합니다.
+```java
+public class SystemEnvExample {
+  public static void main(String[] args) {
+    String javaHome = System.getenv("JAVA_HOME");
+    System.out.println("JAVA_HOME: " + javaHome);
+  }
+}
+```
+
 # 7. String 클래스
 - 자바의 문자열은 java.lang 패키지의 String 클래스의 인스턴스로 관리됩니다.
 
