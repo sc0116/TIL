@@ -1313,7 +1313,56 @@ public class ValueCompareExample {
     Integer obj4 = 10;
     System.out.println("== 결과: " + (obj3 == obj4));                                //true
     System.out.println("언박싱 후 == 결과: " + (obj3.intValue() == obj4.intValue())); //true
-    System.out.println("equals() 결과: " + obj3.equals(obj4));                      //true
+    System.out.println("equals() 결과: " + obj3.equals(obj4));                      //trueZk
   }
 }
 ```
+
+# 13. Math, Random 클래스
+
+## Math 클래스
+- java.lang.Math 클래스는 수학 계산에 사용할 수 있는 메소드를 제공하고 있습니다.
+- Math 클래스가 제공하는 메소드는 모두 정적(static)이므로 Math 클래스로 바로 사용이 가능합니다.
+
+메소드|설명|예제 코드|리턴값
+:---|:---|:---|:---
+int abs(int a)<br>double abs(double a)|절대값|int v1 = Math.abs(-5);<br>double v2 = Math.abs(-3.14);|v1 = 5<br>v2 = 3.14
+double ceil(double a)|올림값|double v3 = Math.ceil(5.3);<br>double v4 = Math.ceil(-5.3);|v3 = 6.0<br>v4 = -5.0
+double floor(double a)|버림값|double v5 = Math.floor(5.3);<br>double v6 = Math.floor(-5.3);|v5 = 5.0<br>v6 = -6.0
+int max(int a, int b)<br>double max(double a, double b)|최대값|int v7 = Math.max(5, 9);<br>double v8 = Math.max(5.3, 2.5);|v7 = 9<br>v8 = 5.3
+int min(int a, int b)<br>double min(double a, double b)|최소값|int v9 = Math.min(5, 9);<br>double v10 = Math.min(5.3, 2.5);|v9 = 5<br>v10 = 2.5
+double random()|랜덤값|double v11 = Math.random()|0.0 <= v11 <= 1.0
+double rint(double a)|가까운 정수의 실수값|double v12 = Math.rint(5.3);<br>double v13 = Math.rint(5.7);|v12 = 5.0<br>v13 = 6.0
+long round(double a)|반올림값|long v14 = Math.round(5.3);<br>long v15 = Math.round(5.7);|v14 = 5<br>v15 = 6
+- round() 메소드는 항상 소수점 첫째 자리에서 반올림해서 정수값을 리턴합니다.
+- 만약 원하는 소수 자릿수에서 반올림된 값을 얻기 위해서는 반올림할 자릿수가 소수점 첫째 자리가 되도록 10^n을 곱한 후, round() 메소드의 리턴값을 얻고, 다시 10^n.0을 나눠주면 됩니다.
+- Math.random() 메소드는 0.0과 1.0 사이의 범위에 속하는 하나의 double 타입의 값을 리턴합니다.
+```java
+0.0 <= Math.random() < 1.0
+
+//주사위 번호 뽑기
+int num = (int) (Math.random() * 6) + 1;
+
+//로또 번호 뽑기
+int num = (int) (Math.random() * 45) + 1;
+```
+
+## Random 클래스
+- java.util.Random 클래스는 난수를 얻어내기 위해 다양한 메소드를 제공합니다.
+- Math.random() 메소드는 0.0에서 1 사이의 double 난수를 얻는 데만 사용한다면, Random 클래스는 boolean, int, long, float, double 난수를 얻을 수 있습니다.
+- 또 다른 차이점은 Random 클래스는 종자값(seed)을 설정할 수 있습니다.
+- 종자값은 난수를 만드는 알고리즘에 사용되는 값으로 종자값이 같으면 같은 난수를 얻습니다.
+
+생성자|설명
+:---|:---
+Random()|호출 시마다 다른 종자값(현재시간 이용)이 자동 설정된다.
+Random(long seed)|매개값으로 주어진 종자값이 설정된다.
+
+### Random 클래스가 제공하는 메소드
+
+리턴값|메소드(매개 변수)|설명
+:---|:---|:---
+boolean|nextBoolean()|boolean 타입의 난수를 리턴
+double|nextDouble()|double 타입의 난수를 리턴(0.0 <= ~ < 1.0)
+int|nextInt()|int 타입의 난수를 리턴(-2^31 <= ~ <= 2^31 - 1)
+int|nextInt(int n)|int 타입의 난수를 리턴(0 <= ~ < n)
