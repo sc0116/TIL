@@ -1046,3 +1046,274 @@ public class PatternExample {
   }
 }
 ```
+
+# 11. Arrays 클래스
+- Arrays 클래스는 배열 조작 기능을 가지고 있습니다.
+- 단순한 배열 복사는 System.arraycopy() 메소드를 사용할 수 있으나, Arrays는 추가적으로 항목 정렬, 항목 검색, 항목 비교와 같은 기능을 제공해줍니다.
+
+리턴 타입|메소드 이름|설명
+:---|:---|:---
+int|binarySearch(배열, 찾는 값)|전체 배열 항목에서 찾는 값이 있는 인덱스 리턴
+타겟 배열|copyOf(원본 배열, 복사할 길이)|원본 배열의 0번 인덱스에서 복사할 길이만큼 복사한 배열 리턴, 복사할 길이는 원본 배열의 길이보다 커도 되며, 타겟 배열의 길이가 된다.
+타겟 배열|copyOfRange(원본 배열, 시작 인덱스, 끝 인덱스)|원본 배열의 시작 인덱스에서 끝 인덱스까지 복사한 배열 리턴
+boolean|deepEquals(배열, 배열)|두 배열의 깊은 비교(중첩 배열의 항목까지 비교)
+boolean|equals(배열, 배열)|두 배열의 얕은 비교(중첩 배열의 항목은 비교하지 않음)
+void|fill(배열, 값)|전체 배열 항목에 동일한 값을 저장
+void|fill(배열, 시작 인덱스, 끝 인덱스, 값)|시작 인덱스부터 끝 인덱스까지의 항목에만 동일한 값을 저장
+void|sort(배열)|배열의 전체 항목을 오름차순으로 정렬
+String|toString(배열)|"[값1, 값2, ...]"와 같은 문자열 리턴
+
+## 배열 복사
+- 배열 복사를 위해 사용할 수 있는 메소드는 copyOf(원본 배열, 복사할 길이), copyOfRange(원본 배열, 시작 인덱스, 끝 인덱스)입니다.
+- copyOf() 메소드는 원본 배열의 0번 인덱스에서 복사할 길이만큼 복사한 타겟 배열을 리턴하는데, 복사할 길이는 원본 배열의 길이보다 커도 되며, 타겟 배열의 길이가 됩니다.
+- copyOfRange() 메소드는 원본 배열의 시작 인덱스에서 끝 인덱스까지 복사한 배열을 리턴하는데, 시작 인덱스는 포함되지만 끝 인덱스는 포함되지 않습니다.
+- 단순히 배열을 복사할 목적이라면 System.arraycopy() 메소드를 이용할 수 있습니다.
+```java
+System.arraycopy(원본 배열, 원본 시작 인덱스, 타겟 배열, 타겟 시작 인덱스, 복사 개수)
+```
+```java
+public class ArrayCopyExample {
+  public static void main(String[] args) {
+    char[] arr1 = {'j', 'a', 'v', 'a'};
+    
+    //방법 1
+    char[] arr2 = Arrays.copyOf(arr1, arr1.length);
+    System.out.println(Arrays.toString(arr2));  //[j, a, v, a]
+    
+    //방법 2
+    char[] arr3 = Arrays.copyOfRange(arr1, 1, 3);
+    System.out.println(Arrays.toString(arr3));  //[a, v]
+    
+    //방법 3
+    char[] arr4 = new char[arr1.length];
+    System.arraycopy(arr1, 0, arr4, 0, arr1.length);
+    for (int i = 0; i < arr4.length; i++) {
+      System.out.println("arr4[" + i + "]=" + arr4[i]);
+    }
+  }
+}
+```
+
+## 배열 항목 비교
+- Arrays의 equals()와 deepEquals()는 배열 항목을 비교합니다.
+- equals()는 1차 항목의 값만 비교하고, deepEquals()는 1차 항목이 서로 다른 배열을 참조할 경우 중첩된 배열의 항목까지 비교합니다.
+```java
+public class EqualsExample {
+  public static void main(String[] args) {
+    int[][] original = { {1, 2}, {3, 4} };
+    
+    //얕은 복사 후 비교
+    System.out.println("[얕은 복제 후 비교]");
+    int[][] cloned1 = Arrays.copyOf(original, original.length);
+    System.out.println("배열 번지 비교: " + original.equals(cloned1));                       //false
+    System.out.println("1차 배열 항목 값 비교: " + Arrays.equals(original, cloned1));        //true
+    System.out.println("중첩 배열 항목 값 비교: " + Arrays.deepEquals(original, cloned1));   //true
+    
+    //깊은 복사 후 비교
+    System.out.println("[깊은 복제 후 비교]");
+    int[][] cloned2 = Arrays.copyOf(original, original.length);
+    cloned2[0] = Arrays.copyOf(original[0], original[0].length);
+    cloned2[1] = Arrays.copyOf(original[1], original[1].length);
+    System.out.println("배열 번지 비교: " + original.equals(cloned2));                       //false
+    System.out.println("1차 배열 항목 값 비교: " + Arrays.equals(original, cloned2));        //false
+    System.out.println("중첩 배열 항목 값 비교: " + Arrays.deepEquals(original, cloned2));   //true
+  }
+}
+```
+
+## 배열 항목 정렬
+- 기본 타입 또는 String 배열은 Arrays.sort() 메소드의 매개값으로 지정해주면 자동으로 오름차순 정렬이 됩니다.
+- 사용자 정의 클래스 타입일 경우에는 클래스가 Comparable 인터페이스를 구현하고 있어야 정렬이 됩니다.
+```java
+public class Member implements Comparable<Member> {
+    String name;
+    Member(String name) {
+        this.name = name;
+    }
+    
+    @Override
+    public int compareTo(Member o) {
+        return name.compareTo(o.name);
+    }
+}
+
+public class SortExample {
+  public static void main(String[] args) {
+    int[] scores = { 99, 97, 98 };
+    Arrays.sort(scores);
+    for (int i = 0; i < scores.length; i++) {
+      System.out.println("scores[" + i + "]=" + scores[i]); // 97 98 99
+    }
+    System.out.println();
+    
+    String[] names = { "홍길동", "박동수", "김민수" };
+    Arrays.sort(names);
+    for (int i = 0; i < names.length; i++) {
+      System.out.println("names[" + i + "]=" + names[i]);   //김민수 박동수 홍길동
+    }
+    System.out.println();
+    
+    Member m1 = new Member("홍길동");
+    Member m1 = new Member("박동수");
+    Member m1 = new Member("김민수");
+    Member[] members = { m1, m2, m3 };
+    Arrays.sort(members);
+    for (int i = 0; i < members.length; i++) {
+      System.out.println("members[" + i + "].name=" + members[i].name); //김민수 박동수 홍길동
+    }
+  }
+}
+```
+
+## 배열 항목 검색
+- 배열 항목에서 특정 값이 위치한 인덱스를 얻는 것을  배열 검색이라고 합니다.
+- 배열 항목을 검색하려면 먼저 Arrays.sort() 메소드로 항목들을 오름차순으로 정렬한 후, Arrays.binarySearch() 메소드로 항목을 찾아야 합니다.
+```java
+public class SearchExample {
+  public static void main(String[] args) {
+    int[] scores = { 99, 97, 98 };
+    Arrays.sort(scores);
+    int index = Arrays.binarySearch(scores, 99);
+    System.out.println("찾은 인데스: " + index); //2
+  }
+}
+```
+
+# 12. Wrapper(포장) 클래스
+- 자바는 기본 타입(byte, char, short, int, long, float, double, boolean)의 값을 갖는 객체를 생성할 수 있고, 이런 객체를 포장(Wrapper) 객체라고 합니다.
+- 포장 객체의 특징은 포장하고 있는 기본 타입 값은 외부에서 변경할 수 없으며, 내부의 값을 변경하고 싶다면 새로운 포장 객체를 만들어야 합니다.
+- 포장 클래스는 java.lang 패키지에 포함되어 있습니다.
+
+기본 타입|포장 클래스
+byte|Byte
+char|Character
+short|Short
+int|Integer
+long|Long
+float|Float
+double|Double
+boolean|Boolean
+
+## 박싱(Boxing)과 언박싱(Unboxing)
+- 기본 타입의 값을 포장 객체로 만드는 과정을 박싱(Boxing)이라고 하고, 반대로 포장 객체에서 기본 타입의 값을 얻어내는 과정을 언박싱(Unboxing)이라고 합니다.
+- 박싱하는 방법은 간단하게 포장 클래스의 생성자 매개값으로 기본 타입의 값 또는 문자열을 넘겨주면 됩니다.
+
+기본 타입의 값을 줄 경우|문자열을 줄 경우
+:---|:---
+Byte obj = new Byte(10);|Byte obj = new Byte("10");
+Character obj = new Character('가');|없음
+Short obj = new Short(100);|Short obj = new Short("100");
+Integer obj = new Integer(1000);|Integer obj = new Integer("1000");
+Long obj = new Long(10000);|Long obj = new Long("10000");
+Float obj = new Float(2.5F)|Float obj = new Float("2.5F");
+Double obj = new Double(3.5);|Double obj = new Double("3.5");
+Boolean obj = new Boolean(true);|Boolean obj = new Boolean("true");
+- 생성자를 이용하지 않아도 다음과 같이 각 포장 클래스마다 가지고 있는 정적 valueOf() 메소드를 사용할 수도 있습니다.
+```java
+Integer obj = Integer.valueOf(1000);
+Integer obj = Integer.valueOf("1000");
+```
+- 박싱된 포장 객체에서 다시 기본 타입의 값을 얻어 내기 위해서는(언박싱하기 위해서는) 각 포장 클래스마다 가지고 있는 "기본 타입명 + Value()" 메소드를 호출하면 됩니다.
+
+기본 타입의 값을 이용|
+:---|
+byte num = obj.byteValue();|
+char ch = obj.charValue();|
+short num = obj.shortValue();|
+int num = obj.intValue();|
+long num = obj.longValue();|
+float num = obj.floatValue();|
+double num = obj.doubleValue();|
+boolean bool = obj.booleanValue();|
+```java
+public class BoxingUnBoxingExample {
+  public static void main(String[] args) {
+    //Boxing
+    Integer obj1 = new Integer(100);
+    Integer obj2 = new Integer("200");
+    Integer obj3 = Integer.valueOf("300");
+    
+    //Unboxing
+    int value1 = obj1.intValue();
+    int value2 = obj2.intValue();
+    int value3 = obj3.intValue();
+
+    System.out.println(value1);
+    System.out.println(value2);
+    System.out.println(value3);
+  }
+}
+```
+
+## 자동 박싱과 언박싱
+- 자동 박싱은 포장 클래스 타입에 기본값이 대입될 경우에 발생합니다.
+```java
+Integer obj = 100;  //자동 박싱
+```
+- 자동 언박싱은 기본 타입에 포장 객체가 대입될 경우에 발생합니다.
+```java
+Integer obj = new Integer(200);
+int value1 = obj;       //자동 언박싱
+int value2 = obj + 100; //자동 언박싱
+```
+
+## 문자열을 기본 타입 값으로 변환
+- 포장 클래스의 주요 용도는 기본 타입의 값을 박싱해서 포장 객체로 만드는 것이지만, 문자열을 기본 타입 값으로 변환할 때에도 많이 사용됩니다.
+- 대부분의 포장 클래스에는 "parse + 기본 타입명"으로 되어 있는 정적(static) 메소드가 있습니다.
+- 이 메소드는 문자열을 매개값으로 받아 기본 타입 값으로 변환합니다.
+
+기본 타입의 값을 이용|
+:---|
+byte num = Byte.parseByte("10");|
+short num = Short.parseShort("100");|
+int num = Integer.parseInt("1000");|
+long num = Long.parseLong("10000");|
+float num = Float.parseFloat("2.5F");|
+double num = Double.parseDouble("3.5")|
+boolean bool = Boolean.parseBoolean("true");|
+```java
+public class StringToPrimitiveValueExample {
+  public static void main(String[] args) {
+    int value1 = Integer.parseInt("10");
+    double value2 = Double.parseDouble("3.14");
+    boolean value3 = Boolean.parseBoolean("true");
+
+    System.out.println("value1: " + value1);
+    System.out.println("value2: " + value2);
+    System.out.println("value3: " + value3);
+  }
+}
+```
+
+## 포장 값 비교
+- 포장 객체는 내부의 값을 비교하기 위해 ==와 != 연산자를 사용할 수 없습니다.
+- 이 연산자는 내부의 값을 비교하는 것이 아니라 포장 객체의 참조를 비교하기 때문입니다.
+- 내부의 값만 비교하려면 언박싱한 값을 얻어 비교해야 하지만, 박싱된 값이 다음 표에 나와 있는 값이라면 ==와 != 연산자로 내부의 값을 바로 비교할 수 있습니다.
+
+타입|값의 범위
+:---|:---
+boolean|true, false
+char|\u0000 ~ \u007f
+byte, short, int|-128 ~ 127
+- 포장 객체에 정확히 어떤 값이 저장될 지 모르는 상황이라면 ==와 != 연산자는 사용하지 않는 것이 좋습니다.
+- 직접 내부 값을 언박싱해서 비교하거나, equals() 메소드로 내부 값을 비교하는 것이 좋습니다.
+- 포장 클래스의 equals() 메소드는 내부의 값을 비교하도록 오버라이딩되어 있습니다.
+```java
+public class ValueCompareExample {
+  public static void main(String[] args) {
+    System.out.println("[-128 ~ 127 초과값일 경우]");
+    Integer obj1 = 300;
+    Integer obj2 = 300;
+    System.out.println("== 결과: " + (obj1 == obj2));                                //false
+    System.out.println("언박싱 후 == 결과: " + (obj1.intValue() == obj2.intValue())); //true
+    System.out.println("equals() 결과: " + obj1.equals(obj2));                      //true
+
+    System.out.println("[-128 ~ 127 범위값일 경우]");
+    Integer obj3 = 10;
+    Integer obj4 = 10;
+    System.out.println("== 결과: " + (obj3 == obj4));                                //true
+    System.out.println("언박싱 후 == 결과: " + (obj3.intValue() == obj4.intValue())); //true
+    System.out.println("equals() 결과: " + obj3.equals(obj4));                      //true
+  }
+}
+```
