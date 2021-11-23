@@ -1366,3 +1366,103 @@ boolean|nextBoolean()|boolean 타입의 난수를 리턴
 double|nextDouble()|double 타입의 난수를 리턴(0.0 <= ~ < 1.0)
 int|nextInt()|int 타입의 난수를 리턴(-2^31 <= ~ <= 2^31 - 1)
 int|nextInt(int n)|int 타입의 난수를 리턴(0 <= ~ < n)
+
+# 14. Date, Calendar 클래스
+- 날짜는 프로그램에서 자주 사용되는 데이터입니다.
+- 자바는 시스템의 날짜 및 시각을 읽을 수 있도록 Date와 Calendar 클래스를 제공하고 있으며, 두 클래스 모두 java.util 패키지에 포함되어 있습니다.
+
+## Date 클래스
+- Date는 날짜를 표현하는 클래스이며, 객체 간에 날짜 정보를 주고 받을 때 주로 사용됩니다.
+- Date 클래스에는 여러 개의 생성자가 선언되어 있지만 대부분 Edprecated(비권장)되어 현재는 Date() 생성자만 주로 사용합니다.
+- 현재 날짜를 문자열로 얻고 싶다면 toString() 메소드를 사용하면 됩니다.
+- toString() 메소드는 영문으로 된 날짜를 리턴하는데 만약 특정 문자열 포맷으로 얻고 싶다면 java.text.SimpleDateFormat 클래스를 이용하면 됩니다.
+- SimpleDateFormat 클래스는 다음 절에서 설명합니다.
+```java
+public class DateExample {
+  public static void main(String[] args) {
+    Date now = new Date();
+    String strNow1 = now.toString();
+    System.out.println(strNow1);
+    
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일 hh시 mm분 ss초");
+    String strNow2 = sdf.format(now);
+    System.out.println(strNow2);
+  }
+}
+```
+
+## Calendar 클래스
+- Calendar는 달력을 표현한 클래스이며, 추상 클래스이므로 new 연산자를 사용해서 인스턴스를 생성할 수 없습니다.
+- 그 이유는 날짜와 시간을 계산하는 방법이 지역과 문화, 나라에 따라 다르기 때문입니다.
+- Calendar 클래스의 정적 메소드인 getInstance() 메소드를 이용하면 현재 운영체제에 설정되어 있는 시간대를 기준으로 한 Calendar 하위 객체를 얻을 수 있습니다.
+
+### 날짜와 시간에 대한 정보
+```java
+int year = now.get(Calendar.YEAR);            //년도를 리턴
+int month = now.get(Calendar.MONTH) + 1;      //월을 리턴
+int day = now.get(Calendar.DAY_OF_MONTH);     //일을 리턴
+int week = now.get(Calendar.DAY_OF_WEEK);     //요일을 리턴
+int amPm = now.get(Calendar.AM_PM);           //오전/오후를 리턴
+int hour = now.get(Calendar.HOUR);            //시를 리턴
+int minute = now.get(Calendar.MINUTE);        //분을 리턴
+int second = now.get(Calendar.SECOND);        //초를 리턴
+```
+
+# 15. Format 클래스
+- Format 클래스는 java.text 패키지에 포함되어 있습니다.
+
+## 숫자 형식 클래스(DecimalFormat)
+- DecimalFormat은 숫자 데이터를 원하는 형식으로 표현하기 위해서 패턴을 사용합니다.
+
+기호|의미|패턴 예|1234567.89 -> 변환 결과
+:---|:---|:---|:---
+0|10진수(빈자리는 0으로 채움)|0<br>0.0<br>0000000000.00000|1234568<br>1234567.9<br>0001234567.89000
+#|10진수(빈자리는 채우지 않음)|#<br>#.#<br>##########.#####|1234568<br>1234567.9<br>1234567.89
+.|소수점|#.0|1234567.9
+-|음수 기호|+#.0<br>-#.0|+1234567.9<br>-1234567.9
+,|단위 구분|#,###.0|1,234,567.9
+E|지수 문자|0.0E0|1.2E6
+;|양수와 음수의 패턴을 모두 기술할 경우, 패턴 구분자|+#,### ; -#,###|+1,234,568(양수일 때)<br>-1,234,568(음수일 때)
+%|100을 곱한 후에 % 문자 붙임|#.# %|123456789 %
+\u00A4|통화 기호|\u00A4 #,###|₩ 1,234,568
+- 적용할 패턴을 선택했다면 DecimalFormat 생성자 매개값으로 지정해서 객체를 생성하면 됩니다.
+- 그리고 나서 format() 메소드를 호출해서 패턴이 적용된 문자열을 얻으면 됩니다.
+```java
+DecimalFormat df = new DecimalFormat("#,###.0");
+String result = df.format(1234567.89);
+```
+
+## 날짜 형식 클래스(SimpleDateFormat)
+- Date 클래스의 toString() 메소드는 영문으로된 날짜를 리턴하는데 만약 특정 문자열 포맷으로 얻고 싶다면 SimpleDateFormat 클래스를 이용하면 됩니다.
+
+패턴 문자|의미|패턴 문자|의미
+:---|:---|:---|:---
+y|년|H|시(0~23)
+M|월|h|시(1~12)
+d|일|K|시(0~11)
+D|월 구분이 없는 일(1~365)|k|시(1~24)
+E|요일|m|분
+a|오전/오후|s|초
+w|년의 몇 번째 주|S|밀리세컨드(1/1000초)
+W|월의 몇 번째 주|
+
+## 문자열 형식 클래스(MessageFormat)
+- MessageFormat 클래스를 사용하면 문자열에 데이터가 들어갈 자리를 표시해 두고, 프로그램이 실행하면서 동적으로 데이터를 삽입해 문자열을 완성시킬 수 있습니다.
+- 만약 id, name, tel이라는 변수에 회원 정보가 저장되어 있을 경우 다음과 같이 문자열 연결 연산자(+)로 출력할 문자열을 생성할 수 있을 것입니다.
+```java
+String result = "회원 ID: " + id + "\n회원 이름: " + name + "\n회원 전화: " + tel;
+```
+- 이 방법도 나쁜 방법은 아니지만, + 연산자로 인해 복잡해 보이고, 전체 문자열을 파악하기 힘듭니다.
+- 다음과 같이 MessageFormat 클래스를 사용하면 좀 더 깔끔하게 데이터를 삽입시켜주고 전체 문자열을 쉽게 예측할 수 있습니다.
+```java
+String message = "회원 ID: {0} \n회원 이름: {1} \n회원 전화: {2}";
+String result = MessageFormat.format(message, id, name, tel);
+```
+- MessageFormat은 정적 format() 메소드를 호출해서 완성된 문자열을 리턴시킵니다.
+- format() 메소드의 첫 번째 매개값은 매개 변수화된 문자열을 지정하고, 두 번째 이후의 매개값은 인덱스 순서에 맞게 값을 나열하면 됩니다.
+- 값을 나열하는 대신, 다음과 같이 배열을 대입해도 좋습니다.
+```java
+String text = "회원 ID: {0} \n회원 이름: {1} \n회원 전화: {2}";
+Object[] arguments = { id, name, tel };
+String result = MessageFormat.format(text, arguments);
+```
