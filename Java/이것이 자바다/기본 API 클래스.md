@@ -1466,3 +1466,110 @@ String text = "회원 ID: {0} \n회원 이름: {1} \n회원 전화: {2}";
 Object[] arguments = { id, name, tel };
 String result = MessageFormat.format(text, arguments);
 ```
+
+# 16. java.time 패키지
+- 자바 8부터 날짜와 시간을 나타내는 여러 가지 API를 새롭게 추가했습니다.
+- 이 API는 java.util 패키지에 없고 별도로 java.time 패키지와 하위 패키지로 제공됩니다.
+
+패키지|설명
+:---|:---
+java.time|날짜와 시간을 나타내는 핵심 API인 LocalDate, LocalTime, LocalDateTime, ZonedDateTime을 포함하고 있다. 이 클래스들은 ISO-8601에 정의된 달력 시스템에 기초한다.
+java.time.chrono|ISO-8601에 정의된 달력 시스템 이외에 다른 달력 시스템이 필요할 때 사용할 수 있는 API들이 포함되어 있다.
+java.time.format|날짜와 시간을 파싱하고 포맷팅하는 API들이 포함되어 있다.
+java.time.temporal|날짜와 시간을 연산하기 위한 보조 API들이 포함되어 있다.
+java.time.zone|타임존을 지원하는 API들이 포함되어 있다.
+
+## 날짜와 시간 객체 생성
+- java.time 패키지에는 다음과 같이 날짜와 시간을 표현하는 5개의 클래스가 있습니다.
+
+클래스명|설명
+:---|:---
+LocalDate|로컬 날짜 클래스
+LocalTime|로컬 시간 클래스
+LocalDateTime|로컬 날짜 및 시간 클래스(LocalDate + LocalTime)
+ZonedDateTime|특정 타임존(TimeZone)의 날짜와 시간 클래스
+Instant|특정 시점의 Time-Stamp 클래스
+
+### LocalDate
+- LocalDate는 로컬 날짜 클래스로 날짜 정보만을 저장할 수 있습니다.
+- 두 가지 정적 메소드를 얻을 수 있는데, now()는 컴퓨터의 현재 날짜 정보를 저장한 LocalDate 객체를 리턴하고 of()는 매개값으로 주어진 날짜 정보를 저장한 LocalDate 객체를 리턴합니다.
+```java
+LocalDate currDate = LocalDate.now();
+LocalDate targetDate = LocalDate.of(int year, int month, int dayOfMonth);
+```
+
+### LocalTime
+- LocalTime은 로컬 시간 클래스로 시간 정보만을 저장할 수 있습니다.
+- now()는 컴퓨터의 현재 시간 정보를 저장한 LocalTime 객체를 리턴하고 of()는 매개값으로 주어진 시간 정보를 저장한 LocalTime 객체를 리턴합니다.
+```java
+LocalTime currTime = LocalTime.now();
+LocalTime targetTime = LocalTime.of(int hour, int minute, int second, int nanoOfSecond);
+```
+
+### LocalDateTime
+- LocalDateTime은 LocalDate와 LocalTime을 결합한 클래스로 날짜와 시간 정보를 모두 저장할 수 있습니다.
+- now()는 컴퓨터의 현재 날짜와 시간 정보를 저장한 LocalDateTime 객체를 리턴하고 of()는 매개값으로 주어진 날짜와 시간 정보를 저장한 LocalDateTime 객체를 리턴합니다.
+```java
+LocalDateTime currDateTime = LocalDateTime.now();
+LocalDateTime targetDateTime = LocalDateTime.of(int year, int month, int dayOfMonth, int hour, int minute, int second, int nanoOfSecond);
+```
+
+### ZonedDateTime
+- ZonedDateTime은 ISO-8601 달력 시스템에서 정의하고 있는 타임존의 날짜와 시간을 저장하는 클래스입니다.
+- 저장 형태는 2021-11-26T07:50:24.017+09:00[Asia/Seoul]와 같이 맨 뒤에 타임존에 대한 정보(±존오프셋[존아이디])가 추가적으로 붙습니다.
+- 존오프셋은 협정세계시와 차이 나는 시간(시차)을 말합니다.
+- ZonedDateTime은 now() 정적 메소드에 ZoneId를 매개값으로 주고 얻을 수 있습니다.
+- ZoneId는 of() 메소드로 얻을 수 있는데, of()의 매개값은 java.util.TimeZone의 getAvailableIDs() 메소드가 리턴하는 유효한 값 중 하나입니다.
+```java
+ZonedDateTime utcDateTime = ZonedDateTime.now(ZoneId.of("UTC"));
+ZoneDateTime seoulDateTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+```
+
+### Instant
+- Instant 클래스는 날짜와 시간의 정보를 얻거나 조작하는데 사용되지 않고, 특정 시점의 타임스탬프로 사용됩니다.
+- 주로 특정한 두 시점 간의 시간적 우선순위를 따질 때 사용합니다.
+- java.util.Date와 가장 유사한 클래스이지만, 차이점은 Date는 로컬 컴퓨터의 현재 날짜와 시간 정보를 기준으로 하지만 Instant는 협정세계시를 기준으로 합니다.
+```java
+Instant instant1 = Instant.now();
+Instant instant2 = Instant.now();
+
+if (instant1.isBefore(instant2)) {
+    System.out.println("instant1이 빠릅니다.");
+} else if (instant1.isAfter(instant2)) {
+    System.out.println("instant1이 늦습니다.");
+} else {
+    System.out.println("동일한 시간입니다.");
+}
+
+System.out.println("차이(nanos): " + instant1.until(instant2, ChronoUnit.NANOS));
+```
+- isBefore(), isAfter()는 시간의 앞뒤 여부를 확인하는 메소드이고, until() 메소드는 두 시점 간의 차이를 리턴합니다.
+
+## 날짜와 시간에 대한 정보 얻기
+- LocalDate와 LocalTime은 프로그램에서 날짜와 시간 정보를 이용할 수 있도록 다음과 같은 메소드를 제공하고 있습니다.
+
+<table>
+<tr><th>클래스</th><th>리턴 타입</th><th>메소드(매개 변수)</th><th>설명</th></tr>
+<tr><td rowspan="7">LocalDate</td><td>int</td><td>getYear()</td><td>년</td></tr>
+<tr><td>Month</td><td>getMonth()</td><td>Month 열거값</td></tr>
+<tr><td>int</td><td>getMonthValue()</td><td>월</td></tr>
+<tr><td>int</td><td>getDayOfYear()</td><td>일년의 몇 번째 일</td></tr>
+<tr><td>int</td><td>getDayOfMonth()</td><td>월의 몇 번째 일</td></tr>
+<tr><td>DayOfWeek</td><td>getDayOfWeek()</td><td>요일</td></tr>
+<tr><td>boolean</td><td>isLeapYear()</td><td>윤년 여부</td></tr>
+
+<tr><td rowspan="4">LocalTime</td><td>int</td><td>getHour()</td>시간</tr>
+<tr><td>int</td><td>getMinute()</td>분</tr>
+<tr><td>int</td><td>getSecond()</td><td>초</td></tr>
+<tr><td>int</td><td>getNano()</td><td>나노초 리턴</td></tr>
+</table>
+
+- LocalDateTime과 ZonedDateTime은 날짜와 시간 정보를 모두 갖고 있기 때문에 위 표에 나와 있는 대부분의 메소드를 가지고 있습니다.
+- 단, isLeapYear()는 LocalDate에만 있기 때문에 toLocalDate() 메소드로 LocalDate로 변환한 후에 사용할 수 있습니다.
+- ZonedDateTime은 시간존에 대한 정보를 제공하는 다음 메소드들을 추가적으로 가지고 있습니다
+
+<table>
+<tr><th>클래스</th><th>리턴 타입</th><th>메소드(매개 변수)</th><th>설명</th></tr>
+<tr><td rowspan="2">ZonedDateTime</td><td>ZoneId</td><td>getZone()</td><td>존아이디를 리턴 (예: Asia/Seoul)</td></tr>
+<tr><td>ZoneOffset</td><td>getOffset()</td><td>존오프셋(시차)을 리턴</td></tr>
+</table>
