@@ -1573,3 +1573,142 @@ System.out.println("차이(nanos): " + instant1.until(instant2, ChronoUnit.NANOS
 <tr><td rowspan="2">ZonedDateTime</td><td>ZoneId</td><td>getZone()</td><td>존아이디를 리턴 (예: Asia/Seoul)</td></tr>
 <tr><td>ZoneOffset</td><td>getOffset()</td><td>존오프셋(시차)을 리턴</td></tr>
 </table>
+
+## 날짜와 시간을 조작하기
+- 날짜와 시간 클래스들은 날짜와 시간을 조작하는 메소드와 상대 날짜를 리턴하는 메소드들을 가지고 있습니다.
+
+### 빼기와 더하기
+
+<table>
+<tr><th>클래스</th><th>리턴 타입</th><th>메소드(매개 변수)</th><th>설명</th></tr>
+<tr><td rowspan="8">LocalDate<br>LocalDateTime<br>ZonedDateTime</td><td rowspan="8">LocalDate<br>LocalDateTime<br>ZonedDateTime</td><td>minusYears(long)</td><td>년 빼기</td></tr>
+<tr><td>minusMonths(long)</td><td>달 빼기</td></tr>
+<tr><td>minusWeeks(long)</td><td>주 빼기</td></tr>
+<tr><td>minusDays(long)</td><td>일 빼기</td></tr>
+<tr><td>plusYears(long)</td><td>년 더하기</td></tr>
+<tr><td>plusMonths(long)</td><td>달 더하기</td></tr>
+<tr><td>plusWeeks(long)</td><td>주 더하기</td></tr>
+<tr><td>plusDays(long)</td><td>일 더하기</td></tr>
+<tr><td rowspan="8">LocalTime<br>LocalDateTime<br>ZonedDateTime</td><td rowspan="8">LocalTime<br>LocalDateTime<br>ZonedDateTime</td><td>minusHours(long)</td><td>시간 빼기</td></tr>
+<tr><td>minusMinutes(long)</td><td>분 빼기</td></tr>
+<tr><td>minusSeconds(long)</td><td>초 빼기</td></tr>
+<tr><td>minusNanos(long)</td><td>나노초 빼기</td></tr>
+<tr><td>plusHours(long)</td><td>시간 더하기</td></tr>
+<tr><td>plusMinutes(long)</td><td>분 더하기</td></tr>
+<tr><td>plusSeconds(long)</td><td>초 더하기</td></tr>
+<tr><td>plusNanos(long)</td><td>나노초 더하기</td></tr>
+</table>
+
+- 각 메소드들은 수정된 LocalDate, LocalTime, LocalDateTime, ZonedDateTime을 리턴하기 때문에 도트(.) 연산자로 연결해서 순차적으로 호출할 수 있습니다.
+
+### 변경하기
+
+<table>
+<tr><th>클래스</th><th>리턴 타입</th><th>메소드(매개 변수)</th><th>설명</th></tr>
+<tr><td rowspan="5">LocalDate<br>LocalDateTime<br>ZonedDateTime</td><td rowspan="5">LocalDate<br>LocalDateTime<br>ZonedDateTime</td><td>withYear(int)</td><td>년 변경</td></tr>
+<tr><td>withMonth(int)</td><td>월 변경</td></tr>
+<tr><td>withDayOfYear(int)</td><td>년의 일 변경</td></tr>
+<tr><td>withDayOfMonth(int)</td><td>월의 일 변경</td></tr>
+<tr><td>with(TemporalAdjuster adjuster)</td><td>상대 변경</td></tr>
+<tr><td rowspan="4">LocalTime<br>LocalDateTime<br>ZonedDateTime</td><td rowspan="4">LocalTime<br>LocalDateTime<br>ZonedDateTime</td><td>withHour(int)</td><td>시간 변경</td></tr>
+<tr><td>withMinute(int)</td><td>분 변경</td></tr>
+<tr><td>withSecond(int)</td><td>초 변경</td></tr>
+<tr><td>withNano(int)</td><td>나노초 변경</td></tr>
+</table>
+
+- with(TemporalAdjuster adjuster) 메소드를 제외한 나머지는 메소드 이름만 보면 어떤 정보를 수정하는지 알 수 있습니다.
+- with() 메소드는현재 날짜를 기준으로 해의 첫 번째 일 또는 마지막 일, 달의 첫 번째 일 또는 마지막 일, 달의 첫 번째 요일, 지난 요일 및 돌아오는 요일 등 상대적인 날짜를 리턴합니다.
+- 매개값은 TemporalAdjuster 타입으로 다음 표에 있는 TemporalAdjuster의 정적 메소드를 호출하면 얻을 수 있습니다.
+
+<table>
+<tr><th>리턴 타입</th><th>메소드(매개 변수)</th><th>설명</th></tr>
+<tr><td rowspan="12">TemporalAdjuster</td><td>firstDayOfYear()</td><td>이번 해의 첫 번째 일</td></tr>
+<tr><td>lastDayOfYear()</td>이번 해의 마지막 일</tr>
+<tr><td>firstDayOfNextYear()</td>다음 해의 첫 번쨰 일</tr>
+<tr><td>firstDayOfMonth()</td>이번 달의 첫 번째 일</tr>
+<tr><td>lastDayOfMonth()</td>이번 달의 마지막 일</tr>
+<tr><td>firstDayOfNextMonth()</td>다음 달의 첫 번째 일</tr>
+<tr><td>firstInMonth(DayOfWeek dayOfWeek)</td>이번 달의 첫 번째 요일</tr>
+<tr><td>lastInMonth(DayOfWeek dayOfWeek)</td>이번 달의 마지막 요일</tr>
+<tr><td>next(DayOfWeek dayOfWeek)</td>돌아오는 요일</tr>
+<tr><td>nextOrSame(DayOfWeek dayOfWeek)</td>돌아오는 요일(오늘 포함)</tr>
+<tr><td>previous(DayOfWeek dayOfWeek)</td>지난 요일</tr>
+<tr><td>previousOrSame(DayOfWeek dayOfWeek)</td>지난 요일(오늘 포함)</tr>
+</table>
+
+## 날짜와 시간을 비교하기
+
+<table>
+<tr><th>클래스</th><th>리턴 타입</th><th>메소드(매개 변수)</th><th>설명</th></tr>
+<tr><td rowspan="3">LocalDate<br>LocalDateTime</td><td rowspan="3">boolean</td><td>isAfter(ChronoLocalDate other)</td><td>이후 날짜인지 비교</td></tr>
+<tr><td>isBefore(ChronoLocalDate other)</td><td>이전 날짜인지 비교</td></tr>
+<tr><td>isEqual(ChronoLocalDate other)</td><td>동일 날짜인지 비교</td></tr>
+<tr><td rowspan="2">LocalDate<br>LocalDateTime</td><td rowspan="2">boolean</td><td>isAfter(LocalTime other)</td><td>이후 시간인지 비교</td></tr>
+<tr><td>isBefore(LocalTime other)</td><td>이전 시간인지 비교</td></tr>
+<tr><td>LocalDate</td><td>Period</td><td>until(ChronoLocalDate endDateExclusive)</td><td>날짜 차이</td></tr>
+<tr><td>LocalDate<br>LocalDateTime<br>LocalDateTime</td><td>long</td><td>until(<br>&nbsp&nbsp;Temporal endExclusive,<br>&nbsp&nbsp;TemporalUnit unit<br>)</td><td>시간 차이</td></tr>
+<tr><td>Period</td><td>Period</td><td>between(<br>&nbsp&nbsp;LocalDate startDateInclusive,<br>&nbsp&nbsp;LocalDate endDateExclusive<br>)</td><td>날짜 차이</td></tr>
+<tr><td>Duration</td><td>Duration</td><td>between(<br>&nbsp&nbsp;Temporal startInclusive,<br>&nbsp&nbsp;Temporal endExclusive<br>)</td><td>시간 차이</td></tr>
+<tr><td>ChronoUnit.YEARS</td><td rowspan="8">long</td><td rowspan="8">between(<br>&nbsp&nbsp;Temporal temporal1Inclusive,<br>&nbsp&nbsp;Temporal temporal2Exclusive<br>)</td><td>전체 년 차이</td></tr>
+<tr><td>ChronoUnit.MONTHS</td><td>전체 달 차이</td></tr>
+<tr><td>ChronoUnit.WEEKS</td><td>전체 주 차이</td></tr>
+<tr><td>ChronoUnit.DAYS</td><td>전체 일 차이</td></tr>
+<tr><td>ChronoUnit.HOURS</td><td>전체 시간 차이</td></tr>
+<tr><td>ChronoUnit.SECONDS</td><td>전체 초 차이</td></tr>
+<tr><td>ChronoUnit.MILLIS</td><td>전체 밀리초 차이</td></tr>
+<tr><td>ChronoUnit.NANOS</td><td>전체 나노초 차이</td></tr>
+</table>
+
+- Period와 Duration은 날짜와 시간의 양을 나타내는 클래스입니다.
+- Period는 년, 달, 일의 양을 나타내는 클래스이고, Duration은 시, 분, 초, 나노초의 양을 나타내는 클래스입니다.
+- 이 클래스들은 D-day나 D-timeㅇ르 구할 떄 사용될 수 있습니다.
+
+<table>
+<tr><th>클래스</th><th>리턴 타입</th><th>메소드(매개 변수)</th><th>설명</th></tr>
+<tr><td rowspan="3">Period</td><td>int</td><td>getYears()</td><td>년의 차이</td></tr>
+<tr><td>int</td><td>getMonths()</td><td>달의 차이</td></tr>
+<tr><td>int</td><td>getDays()</td><td>일의 차이</td></tr>
+<tr><td rowspan="2">Duration</td><td>int</td><td>getSeconds()</td><td>초의 차이</td></tr>
+<tr><td>int</td><td>getNano()</td><td>나노초의 차이</td></tr>
+</table>
+
+- between() 메소드는 Period와 Duration 클래스, 그리고 ChronoUnit 열거 타입에도 있습니다.
+- Period와 Duration의 between()은 년, 달, 일, 초의 단순 차이를 리턴하고, ChronoUnit 열거 타입의 between()은 전체 시간을 기준으로 차이를 리턴합니다.
+
+## 파싱과 포맷팅
+- 날짜와 시간 클래스는 문자열을 파싱해서 날짜와 시간을 생성하는 메소드와 이와 반대로 날짜와 시간을 포맷팅된 문자열로 변환하는 메소드를 제공하고 있습니다.
+
+### 파싱(Parsing) 메소드
+
+<table>
+<tr><th>클래스</th><th>리턴 타입</th><th>메소드(매개 변수)</th></tr>
+<tr><td rowspan="2">LocalDate<br>LocalTime<br>LocalDateTime<br>ZonedDateTime</td><td rowspan="2">LocalDate<br>LocalTime<br>LocalDateTime<br>ZonedDateTime</td><td>parse(CharSequence)</td></tr>
+<tr><td>parse(CharSequence, DateTimeFormatter)</td></tr>
+</table>
+
+- LocalDate의 parse(CharSequence) 메소드는 기본적으로 ISO_LOCAL_DATE 포맷터를 사용해서 문자열을 파싱합니다.
+- ISO_LOCAL_DATE는 DateTimeFormatter의 상수로 정의되어 있는데, "2021-11-27" 형식의 포맷터입니다.
+```java
+LocalDate localDate = LocalDate.parse("2021-11-27");
+```
+- 만약 다른 포맷터를 이용해서 문자열을 파싱하고 싶다면 parse(CharSequence, DateTimeFormatter) 메소드를 사용할 수 있습니다.
+- DateTimeFormatter는 ofPattern() 메소드로 정의할 수도 있는데, 다음 코드는 "2021.11.27" 형식의 DateTimeFormatter를 정의하고 문자열을 파싱했습니다.
+```java
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+LocalDate localDate = LocalDate.parse("2021.11.27", formatter);
+```
+
+### 포맷팅(Formatting) 메소드
+
+<table>
+<tr><th>클래스</th><th>리턴 타입</th><th>메소드(매개 변수)</th></tr>
+<tr><td>LocalDate<br>LocalTime<br>LocalDateTime<br>ZonedDateTime</td><td>String</td><td>format(DateTimeFormatter formatter)</td></tr>
+</table>
+
+- format()의 매개값은 DateTimeFormatter인데 해당형식대로 문자열을 리턴합니다.
+```java
+LocalDateTime now = LocalDateTime.now();
+DateTimeFormatter dateTimeFormatter =
+    DateTimeFormatter.ofPattern("yyyy년 M월 d일 a h시 m분");
+String nowString = now.format(dateTimeFormatter);
+```
