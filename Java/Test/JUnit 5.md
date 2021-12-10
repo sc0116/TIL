@@ -39,3 +39,40 @@ testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 <scope>test</scope>
 </dependency>
 ```
+
+# 2. 테스트 작성하기
+- 다음 예제는 JUnit Jupiter에서 테스트를 작성하기 위한 최소 요구 사항을 보여준다.
+```java
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import example.util.Calculator;
+
+import org.junit.jupiter.api.Test;
+
+class MyFirstJUnitJupiterTests {
+
+    private final Calculator calculator = new Calculator();
+
+    @Test
+    void addition() {
+        assertEquals(2, calculator.add(1, 1));
+    }
+    
+}
+```
+
+## 어노테이션
+- 달리 명시되지 않는 한 모든 핵심 어노테이션은 junit-jupiter-api 모듈의 org.junit.jupiter.api 패키지에 있다.
+
+어노테이션|설명
+:---|:---
+@Test|테스트 메소드임을 나타낸다.
+@ParameterizedTest|매개변수가 있는 테스트 메소드임을 나타낸다.
+@RepeatedTest|반복되는 테스트임을 나타낸다.
+@TestFactory|동적 테스트임을 나타낸다.
+@TestTemplate|등록된 공급자가 반환한 호출 컨텍스트의 수에 따라 여러 번 호출되도록 설계된 테스트 템플릿임을 나타낸다.
+@TestClassOrder|테스트 클래스 실행 순서를 구성하는데 사용된다.
+@TestMethodOrder|테스트 메소드 실행 순서를 구성하는데 사용된다.
+@TestInstance|테스트 인스턴스 생명 주기를 구성하는데 사용된다.
+@DisplayName|테스트 클래스 또는 메소드에 대한 사용자 정의 이름을 선언한다.
+@DisplayNameGeneration|테스트 클래스에 대한 사용자 정의 이름 생성기를 선언한다.
