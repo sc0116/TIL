@@ -5,6 +5,7 @@
 
 ## Java
 - [이것이 자바다](./Java/이것이%20자바다)
+- [Effective Java 3/E](Java/Effective%20Java/README.md)
 - Test
   - [JUnit 5](Java/Test/JUnit%205.md)
     
