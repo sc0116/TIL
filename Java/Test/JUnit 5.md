@@ -76,14 +76,3 @@ class MyFirstJUnitJupiterTests {
 @TestInstance|테스트 인스턴스 생명 주기를 구성하는데 사용된다.
 @DisplayName|테스트 클래스 또는 메소드에 대한 사용자 정의 이름을 선언한다.
 @DisplayNameGeneration|테스트 클래스에 대한 사용자 정의 이름 생성기를 선언한다.
-@BeforeEach|
-@AfterEach|
-@BeforeAll|
-@AfterAll|
-@Nested|
-@Tag|
-@Disabled|
-@Timeout|
-@ExtendWith|
-@RegisterExtension|
-@TempDir|
