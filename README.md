@@ -6,8 +6,7 @@
 ## Java
 - [이것이 자바다](./Java/이것이%20자바다)
 - [Effective Java 3/E](Java/Effective%20Java/README.md)
-- Test
-  - [JUnit 5](Java/Test/JUnit%205.md)
+- [모던 자바 인 액션](Java/모던%20자바%20인%20액션/README.md)
     
 ## Spring
 - [스프링 핵심 원리 - 기본편](./Spring/스프링%20핵심%20원리%20-%20기본편)
