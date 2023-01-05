@@ -10,6 +10,9 @@
     
 ## Spring
 - [스프링 핵심 원리 - 기본편](./Spring/스프링%20핵심%20원리%20-%20기본편)
+- ### Transaction
+
+  - [@Transactional 전파 레벨](Spring/Transaction/@Transactional%20전파%20레벨.md)
 
 ## OOP
 - [객체지향의 사실과 오해](./OOP/객체지향의%20사실과%20오해)
