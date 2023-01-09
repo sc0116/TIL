@@ -19,6 +19,7 @@
 ## Database
 - ### Transaction
 
+  - [트랜잭션이란](Database/Transaction/트랜잭션이란.md)
   - [MySQL 트랜잭션 격리 수준](Database/Transaction/MySQL%20트랜잭션%20격리%20수준.md)
 
 ## Network
