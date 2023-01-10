@@ -22,6 +22,9 @@
   - [트랜잭션이란](Database/Transaction/트랜잭션이란.md)
   - [MySQL 트랜잭션 격리 수준](Database/Transaction/MySQL%20트랜잭션%20격리%20수준.md)
 
+## Infra
+- [무중단 배포 아키텍처](Infra/무중단%20배포%20아키텍처.md)
+
 ## Network
 - [대칭키와 비대칭키](Network/대칭키와%20비대칭키.md)
 
