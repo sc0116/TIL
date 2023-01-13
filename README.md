@@ -12,6 +12,8 @@
     
 ## Spring
 - [스프링 핵심 원리 - 기본편](./Spring/스프링%20핵심%20원리%20-%20기본편)
+- ### JPA
+  - [자바 ORM 표준 JPA 프로그래밍](Spring/JPA/자바%20ORM%20표준%20JPA%20프로그래밍/README.md)
 - ### Transaction
 
   - [@Transactional 전파 레벨](Spring/Transaction/@Transactional%20전파%20레벨.md)
